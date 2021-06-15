@@ -1,3 +1,5 @@
+import {convertInTarrif} from './convertInTariff';
+
 type CalculatePlanValueProps = {
   minutesUsed: string;
   plan: string;
@@ -27,6 +29,9 @@ export function formatAmount(amount: number){
 }
 
 export function calc({plan, tariff , minutesUsed, limitMinutes } : CalcProps): CalculatePlanValueResults {
+  if(tariff === -1){
+    throw new Error;
+  }
 
   const planValue = parseFloat(plan);
   let excessMinutes = 0 ;
@@ -55,79 +60,26 @@ export function calculatePlanValue({origem, destiny, plan, minutesUsed}: Calcula
   
   const minutesUsedConverted = parseInt(minutesUsed);
 
-  //plano de 29.9
-  if (plan === '29.9'){
-    if(origem === '11' && destiny === '16'){
-      return calc({plan, tariff : 1.90, minutesUsed : minutesUsedConverted, limitMinutes: 30  });
+  try{
+      //plano de 29.9
+    if (plan === '29.9'){
+      return calc({plan, tariff: convertInTarrif({origem, destiny}), minutesUsed : minutesUsedConverted, limitMinutes: 30  }) 
+    }
+    //plano de 59.9
+    if (plan === '59.9'){
+      return calc({plan, tariff: convertInTarrif({origem, destiny}), minutesUsed : minutesUsedConverted, limitMinutes: 60  })
     }
 
-    if(origem === '16' && destiny === '11'){
-      return calc({plan, tariff : 2.90, minutesUsed : minutesUsedConverted, limitMinutes: 30  });
+    //plano de 119.9
+    if (plan === '119.9'){
+      return calc({plan, tariff: convertInTarrif({origem, destiny}), minutesUsed : minutesUsedConverted, limitMinutes: 120 })
     }
-
-    if(origem === '11' && destiny === '17'){
-      return calc({plan, tariff : 1.70, minutesUsed : minutesUsedConverted, limitMinutes: 30  });
-    }
-    if(origem === '17' && destiny === '11'){
-      return calc({plan, tariff : 2.70, minutesUsed : minutesUsedConverted, limitMinutes: 30  });
-    }
-    if(origem === '11' && destiny === '18'){
-      return calc({plan, tariff : 0.90, minutesUsed : minutesUsedConverted, limitMinutes: 30  });
-    }
-    if(origem === '18' && destiny === '11'){
-      return calc({plan, tariff : 1.90, minutesUsed : minutesUsedConverted, limitMinutes: 30  });
+  }catch(error){
+    return {
+      totalNoPlan: '',
+      totalWithPlan: '',
     }
   }
-
-  //plano de 59.9
-  if (plan === '59.9'){
-    if(origem === '11' && destiny === '16'){
-      return calc({plan, tariff : 1.90, minutesUsed : minutesUsedConverted, limitMinutes: 60  });
-    }
-
-    if(origem === '16' && destiny === '11'){
-      return calc({plan, tariff : 2.90, minutesUsed : minutesUsedConverted, limitMinutes: 60  });
-    }
-
-    if(origem === '11' && destiny === '17'){
-      return calc({plan, tariff : 1.70, minutesUsed : minutesUsedConverted, limitMinutes: 60  });
-    }
-    if(origem === '17' && destiny === '11'){
-      return calc({plan, tariff : 2.70, minutesUsed : minutesUsedConverted, limitMinutes: 60  });
-    }
-    if(origem === '11' && destiny === '18'){
-      return calc({plan, tariff : 0.90, minutesUsed : minutesUsedConverted, limitMinutes: 60  });
-    }
-    if(origem === '18' && destiny === '11'){
-      return calc({plan, tariff : 1.90, minutesUsed : minutesUsedConverted, limitMinutes: 60  });
-    }
-  }
-
-  //plano de 119.9
-  if (plan === '119.9'){
-    if(origem === '11' && destiny === '16'){
-      return calc({plan, tariff : 1.90, minutesUsed : minutesUsedConverted, limitMinutes: 120  });
-    }
-
-    if(origem === '16' && destiny === '11'){
-      return calc({plan, tariff : 2.90, minutesUsed : minutesUsedConverted, limitMinutes: 120  });
-    }
-
-    if(origem === '11' && destiny === '17'){
-      return calc({plan, tariff : 1.70, minutesUsed : minutesUsedConverted, limitMinutes: 120  });
-    }
-    if(origem === '17' && destiny === '11'){
-      return calc({plan, tariff : 2.70, minutesUsed : minutesUsedConverted, limitMinutes: 120  });
-    }
-    if(origem === '11' && destiny === '18'){
-      return calc({plan, tariff : 0.90, minutesUsed : minutesUsedConverted, limitMinutes: 120  });
-    }
-    if(origem === '18' && destiny === '11'){
-      return calc({plan, tariff : 1.90, minutesUsed : minutesUsedConverted, limitMinutes: 120  });
-    }
-  }
-  return {
-    totalNoPlan: '',
-    totalWithPlan: '',
-  }
+  
+  
 }
